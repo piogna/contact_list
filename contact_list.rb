@@ -41,6 +41,22 @@ class ContactList
     result = "Sorry, that ID could not be found" if result.length == 0
     puts result
   end
+
+  def self.search(query)
+    result = ""
+    file = File.open("contact_list.txt", "r")
+    until file.eof?
+      line = file.readline
+      if line.include? query
+        split_line = line.split(',')
+        result = "#{split_line[0]}: #{split_line[1]} (#{split_line[2].strip})"
+      end
+    end
+    file.close
+    result = "Sorry, that ID could not be found" if result.length == 0
+    puts result
+
+  end
 end
 if ARGV.length == 0
   puts "Here is a list of available commands"
@@ -68,4 +84,11 @@ when "show"
     exit
   end
   ContactList.show(ARGV[1])
+
+when "search"
+  if ARGV[1].nil?
+    puts "You need to enter a query."
+    exit
+  end
+  ContactList.search(ARGV[1])
 end
