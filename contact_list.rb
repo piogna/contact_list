@@ -24,7 +24,22 @@ class ContactList
     file.puts("#{contact.id},#{contact.name},#{contact.email}")
     file.close
     puts "Contact #{contact.id}: #{contact.name}, #{contact.email} was" +
-      "created successfully!"
+      " created successfully!"
+  end
+
+  def self.show(id)
+    result = ""
+    file = File.open("contact_list.txt", "r")
+    until file.eof?
+      line = file.readline
+      split_line = line.split(',')
+      if(split_line[0] == id)
+        result = "#{split_line[0]}: #{split_line[1]} (#{split_line[2].strip})"
+      end
+    end
+    file.close
+    result = "Sorry, that ID could not be found" if result.length == 0
+    puts result
   end
 end
 if ARGV.length == 0
@@ -46,4 +61,11 @@ when "new"
   print "Enter the contact's email: "
   email = $stdin.gets.chomp
   ContactList.new(name, email)
+
+when "show"
+  if ARGV[1].nil?
+    puts "You need to enter an ID as the second argument."
+    exit
+  end
+  ContactList.show(ARGV[1])
 end
