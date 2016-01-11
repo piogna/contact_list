@@ -17,14 +17,19 @@ class ContactList
   def self.new(name, email)
     contact = Contact.new(name: name, email: email)
     file = File.open("contact_list.txt", "a+")
-    last_line = file.readlines.last
-    split_last_line = last_line.split(',')
-    next_id = split_last_line[0].to_i
-    contact.id = next_id + 1
-    file.puts("#{contact.id},#{contact.name},#{contact.email}")
+    lines = file.readlines
+    duplicate = lines.any? { |l| l.include? email }
+    if duplicate
+      puts "That email already exists in the list."
+    else
+      split_last_line = last_line.split(',')
+      next_id = split_last_line[0].to_i
+      contact.id = next_id + 1
+      file.puts("#{contact.id},#{contact.name},#{contact.email}")
+      puts "Contact #{contact.id}: #{contact.name}, #{contact.email} was" +
+        " created successfully!"
+    end
     file.close
-    puts "Contact #{contact.id}: #{contact.name}, #{contact.email} was" +
-      " created successfully!"
   end
 
   def self.show(id)
