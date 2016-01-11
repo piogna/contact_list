@@ -6,10 +6,17 @@ class ContactList
   # TODO: Implement user interaction. This should be the only file where you use `puts` and `gets`.
   def self.list
     file = File.open("contact_list.txt", "r")
+    i = 1
     until file.eof?
       line = file.readline
       split_line = line.split(',')
       puts "#{split_line[0]}: #{split_line[1]} (#{split_line[2].strip})"
+      if i % 5 == 0
+        puts "Press any key to show the next 5 lines"
+        $stdin.gets
+        system "clear"
+      end
+      i += 1
     end
     file.close
   end
