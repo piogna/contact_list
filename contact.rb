@@ -3,10 +3,12 @@ require 'csv'
 # Represents a person in an address book.
 class Contact
 
-  attr_accessor :name, :email
+  attr_accessor :id, :name, :email
 
-  def initialize(name, email)
-    # TODO: Assign parameter values to instance variables.
+  def initialize(id, name, email)
+    @id = id
+    @name = name
+    @email = email
   end
 
   # Provides functionality for managing a list of Contacts in a database.

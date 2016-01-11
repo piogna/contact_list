@@ -4,7 +4,14 @@ require_relative 'contact'
 class ContactList
 
   # TODO: Implement user interaction. This should be the only file where you use `puts` and `gets`.
-
+  def self.list
+    file = File.open("contact_list.txt", "r")
+    until file.eof?
+      line = file.readline
+      split_line = line.split(',')
+      puts "#{split_line[0]}: #{split_line[1]} (#{split_line[2].strip})"
+    end
+  end
 end
 if ARGV.length == 0
   puts "Here is a list of available commands"
@@ -14,4 +21,9 @@ if ARGV.length == 0
   puts "\tsearch   - Search contacts"
 
   exit
+end
+
+case ARGV[0]
+when "list"
+  ContactList.list
 end
