@@ -23,6 +23,8 @@ class ContactList
     contact.id = next_id + 1
     file.puts("#{contact.id},#{contact.name},#{contact.email}")
     file.close
+    puts "Contact #{contact.id}: #{contact.name}, #{contact.email} was" +
+      "created successfully!"
   end
 end
 if ARGV.length == 0
