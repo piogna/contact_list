@@ -5,10 +5,10 @@ class Contact
 
   attr_accessor :id, :name, :email
 
-  def initialize(id, name, email)
-    @id = id
-    @name = name
-    @email = email
+  def initialize(options = {})
+    @id = options[:id]
+    @name = options[:name]
+    @email = options[:email]
   end
 
   # Provides functionality for managing a list of Contacts in a database.

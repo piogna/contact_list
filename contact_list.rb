@@ -11,6 +11,18 @@ class ContactList
       split_line = line.split(',')
       puts "#{split_line[0]}: #{split_line[1]} (#{split_line[2].strip})"
     end
+    file.close
+  end
+
+  def self.new(name, email)
+    contact = Contact.new(name: name, email: email)
+    file = File.open("contact_list.txt", "a+")
+    last_line = file.readlines.last
+    split_last_line = last_line.split(',')
+    next_id = split_last_line[0].to_i
+    contact.id = next_id + 1
+    file.puts("#{contact.id},#{contact.name},#{contact.email}")
+    file.close
   end
 end
 if ARGV.length == 0
@@ -26,4 +38,10 @@ end
 case ARGV[0]
 when "list"
   ContactList.list
+when "new"
+  print "Enter the contact's full name: "
+  name = $stdin.gets.chomp
+  print "Enter the contact's email: "
+  email = $stdin.gets.chomp
+  ContactList.new(name, email)
 end
