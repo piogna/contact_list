@@ -9,6 +9,8 @@ class Contact
     @id = options[:id]
     @name = options[:name]
     @email = options[:email]
+    @phone_numbers = options[:phone_numbers]
+    @phone_numbers ||= []
   end
 
   # Provides functionality for managing a list of Contacts in a database.

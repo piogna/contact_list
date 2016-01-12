@@ -1,4 +1,5 @@
 require_relative 'contact'
+require_relative 'contact_data_access'
 
 # Interfaces between a user and their contact list. Reads from and writes to standard I/O.
 class ContactList
@@ -49,7 +50,7 @@ class ContactList
         result = "#{split_line[0]}: #{split_line[1]} (#{split_line[2].strip})\n"
         if split_line[-1].include? '|'
           phone_numbers = split_line[-1].split('|')
-          phone_numbers.each { |num| result << "\t" + num + "\n"}
+          phone_numbers.each { |num| result << "\s\s" + num + "\n"}
         end
       end
     end
@@ -76,10 +77,10 @@ class ContactList
 end
 if ARGV.length == 0
   puts "Here is a list of available commands"
-  puts "\tnew      - Create a new contact"
-  puts "\tlist     - List all contacts"
-  puts "\tshow     - Show a contact"
-  puts "\tsearch   - Search contacts"
+  puts "\s\snew      - Create a new contact"
+  puts "\s\slist     - List all contacts"
+  puts "\s\sshow     - Show a contact"
+  puts "\s\ssearch   - Search contacts"
 
   exit
 end
