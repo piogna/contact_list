@@ -45,8 +45,12 @@ class ContactList
     until file.eof?
       line = file.readline
       split_line = line.split(',')
-      if(split_line[0] == id)
-        result = "#{split_line[0]}: #{split_line[1]} (#{split_line[2].strip})"
+      if split_line[0] == id
+        result = "#{split_line[0]}: #{split_line[1]} (#{split_line[2].strip})\n"
+        if split_line[-1].include? '|'
+          phone_numbers = split_line[-1].split('|')
+          phone_numbers.each { |num| result << "\t" + num + "\n"}
+        end
       end
     end
     file.close
