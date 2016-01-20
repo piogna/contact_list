@@ -1,36 +1,33 @@
-require_relative 'contact'
-require_relative 'contact_repository'
+require_relative 'environment'
 
 # Interfaces between a user and their contact list. Reads from and writes to standard I/O.
 class ContactList
 
   # TODO: Implement user interaction. This should be the only file where you use `puts` and `gets`.
   def self.list
-    contacts = ContactRepository.all
-    contacts.each do |contact|
+    Contact.all.each do |contact|
       puts "#{contact.id}: #{contact.name} (#{contact.email})"
     end
   end
 
   def self.new(name, email)
-    contact = Contact.new(name: name, email: email)
-    ContactRepository.create contact
+    Contact.create(name: name, email: email)
   end
 
   def self.show(id)
-    contact = ContactRepository.find id
+    contact = Contact.find id
     puts "#{contact.id}: #{contact.name} (#{contact.email})"
   end
 
   def self.search(search_string)
-    contacts = ContactRepository.query search_string
+    contacts = Contact.where("name LIKE ? OR email LIKE ?", "%#{search_string}%", "%#{search_string}%")
     contacts.each do |contact|
       puts "#{contact.id}: #{contact.name} (#{contact.email})"
     end
   end
 
   def self.update(id)
-    contact = ContactRepository.find(ARGV[1])
+    contact = Contact.find(ARGV[1])
     unless contact.nil?
       print "What will the new name be? "
       name = $stdin.gets.chomp
@@ -38,12 +35,13 @@ class ContactList
       email = $stdin.gets.chomp
       contact.name = name
       contact.email = email
-      ContactRepository.update contact
+      Contact.save
     end
   end
 
   def self.delete(id)
-    puts ContactRepository.destroy(id)
+    contact = Contact.find id
+    contact.destroy
   end
 end
 if ARGV.length == 0
