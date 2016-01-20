@@ -1,78 +1,49 @@
 require_relative 'contact'
-require_relative 'contact_data_access'
+require_relative 'contact_repository'
 
 # Interfaces between a user and their contact list. Reads from and writes to standard I/O.
 class ContactList
 
   # TODO: Implement user interaction. This should be the only file where you use `puts` and `gets`.
   def self.list
-    file = File.open("contact_list.txt", "r")
-    i = 1
-    until file.eof?
-      line = file.readline
-      split_line = line.split(',')
-      puts "#{split_line[0]}: #{split_line[1]} (#{split_line[2].strip})"
-      if i % 5 == 0
-        puts "Press any key to show the next 5 lines"
-        $stdin.gets
-        system "clear"
-      end
-      i += 1
+    contacts = ContactRepository.all
+    contacts.each do |contact|
+      puts "#{contact.id}: #{contact.name} (#{contact.email})"
     end
-    file.close
   end
 
   def self.new(name, email)
     contact = Contact.new(name: name, email: email)
-    file = File.open("contact_list.txt", "a+")
-    lines = file.readlines
-    duplicate = lines.any? { |l| l.include? email }
-    if duplicate
-      puts "That email already exists in the list."
-    else
-      split_last_line = last_line.split(',')
-      next_id = split_last_line[0].to_i
-      contact.id = next_id + 1
-      file.puts("#{contact.id},#{contact.name},#{contact.email}")
-      puts "Contact #{contact.id}: #{contact.name}, #{contact.email} was" +
-        " created successfully!"
-    end
-    file.close
+    ContactRepository.create contact
   end
 
   def self.show(id)
-    result = ""
-    file = File.open("contact_list.txt", "r")
-    until file.eof?
-      line = file.readline
-      split_line = line.split(',')
-      if split_line[0] == id
-        result = "#{split_line[0]}: #{split_line[1]} (#{split_line[2].strip})\n"
-        if split_line[-1].include? '|'
-          phone_numbers = split_line[-1].split('|')
-          phone_numbers.each { |num| result << "\s\s" + num + "\n"}
-        end
-      end
-    end
-    file.close
-    result = "Sorry, that ID could not be found" if result.length == 0
-    puts result
+    contact = ContactRepository.find id
+    puts "#{contact.id}: #{contact.name} (#{contact.email})"
   end
 
-  def self.search(query)
-    result = ""
-    file = File.open("contact_list.txt", "r")
-    until file.eof?
-      line = file.readline
-      if line.include? query
-        split_line = line.split(',')
-        result = "#{split_line[0]}: #{split_line[1]} (#{split_line[2].strip})"
-      end
+  def self.search(search_string)
+    contacts = ContactRepository.query search_string
+    contacts.each do |contact|
+      puts "#{contact.id}: #{contact.name} (#{contact.email})"
     end
-    file.close
-    result = "Sorry, that ID could not be found" if result.length == 0
-    puts result
+  end
 
+  def self.update(id)
+    contact = ContactRepository.find(ARGV[1])
+    unless contact.nil?
+      print "What will the new name be? "
+      name = $stdin.gets.chomp
+      print "What will the new email be? "
+      email = $stdin.gets.chomp
+      contact.name = name
+      contact.email = email
+      ContactRepository.update contact
+    end
+  end
+
+  def self.delete(id)
+    puts ContactRepository.destroy(id)
   end
 end
 if ARGV.length == 0
@@ -81,6 +52,8 @@ if ARGV.length == 0
   puts "\s\slist     - List all contacts"
   puts "\s\sshow     - Show a contact"
   puts "\s\ssearch   - Search contacts"
+  puts "\s\supdate   - Update contact"
+  puts "\s\sdelete   - Delete contact"
 
   exit
 end
@@ -108,4 +81,18 @@ when "search"
     exit
   end
   ContactList.search(ARGV[1])
+
+when "update"
+  if ARGV[1].nil?
+    puts "You need to enter an ID as the second argument."
+    exit
+  end
+  ContactList.update(ARGV[1])
+
+when "delete"
+  if ARGV[1].nil?
+    puts "You need to enter an ID as the second argument."
+    exit
+  end
+  ContactList.delete(ARGV[1])
 end
